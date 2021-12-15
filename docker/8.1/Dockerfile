@@ -5,6 +5,11 @@ LABEL maintainer="Taylor Otwell"
 ARG WWWGROUP
 ARG NODE_VERSION=16
 
+# COPY --chown=WWWGROUP ./ /var/www/html
+# COPY --chown=sail:$WWWGROUP ./ /var/www/html
+# RUN chmod +x /var/www/html
+# COPY --chown=WWWGROUP play_controls_ms  /var/www/html
+
 WORKDIR /var/www/html
 
 ENV DEBIAN_FRONTEND noninteractive
@@ -49,9 +54,13 @@ RUN setcap "cap_net_bind_service=+ep" /usr/bin/php8.1
 RUN groupadd --force -g $WWWGROUP sail
 RUN useradd -ms /bin/bash --no-user-group -g $WWWGROUP -u 1337 sail
 
-COPY start-container /usr/local/bin/start-container
-COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-COPY php.ini /etc/php/8.1/cli/conf.d/99-sail.ini
+COPY /docker/8.1/start-container /usr/local/bin/start-container
+COPY /docker/8.1/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY /docker/8.1/php.ini /etc/php/8.1/cli/conf.d/99-sail.ini
+# COPY --chown=sail:$WWWGROUP ./ /var/www/html/
+COPY ./ /var/www/html/
+RUN chmod -R o+w /var/www/html/storage
+RUN chmod -R o+w /var/www/html/bootstrap
 RUN chmod +x /usr/local/bin/start-container
 
 EXPOSE 8000
