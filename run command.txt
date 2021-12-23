@@ -1,0 +1,19 @@
+docker network create -d bridge sail
+docker run -d -p "3310:3306" -v /var/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD="password" -e MYSQL_ROOT_HOST="%" -e MYSQL_DATABASE="play_controls_db" -e MYSQL_USER="sail" -e MYSQL_PASSWORD="password" -e MYSQL_ALLOW_EMPTY_PASSWORD=1 --name="2d_play_controls_db" --network=sail mysql/mysql-server:8.0
+docker run -d -p "8085:80" --add-host host.docker.internal:host-gateway -e WWWUSER=1000 -e LARAVEL_SAIL=1 -e XDEBUG_MODE="off" -e XDEBUG_CONFIG="client_host=host.docker.internal" --network="sail" --name 2d_play_controls_ms dalvaradoc/2d_play_controls_ms:v2.1 
+
+# Primera vez
+docker network create -d bridge sail
+docker run -d -p "3310:3306" -v /var/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD="password" -e MYSQL_ROOT_HOST="%" -e MYSQL_DATABASE="play_controls_db" -e MYSQL_USER="sail" -e MYSQL_PASSWORD="password" -e MYSQL_ALLOW_EMPTY_PASSWORD=1 --name="2d_play_controls_db" --network=sail mysql/mysql-server:8.0
+docker run -d -p "8085:80" --add-host host.docker.internal:host-gateway -e WWWUSER=1000 -e LARAVEL_SAIL=1 -e XDEBUG_MODE="off" -e XDEBUG_CONFIG="client_host=host.docker.internal" --network="sail" --name 2d_play_controls_ms dalvaradoc/2d_play_controls_ms:v2.1 
+docker exec -it 2d_play_controls_ms bash
+php artisan migrate
+exit
+
+# Test
+docker network create -d bridge sail
+docker run --rm -d -p "3310:3306" -v /var/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD="password" -e MYSQL_ROOT_HOST="%" -e MYSQL_DATABASE="play_controls_db" -e MYSQL_USER="sail" -e MYSQL_PASSWORD="password" -e MYSQL_ALLOW_EMPTY_PASSWORD=1 --name="2d_play_controls_db" --network=sail mysql/mysql-server:8.0
+docker run --rm -d -p "8085:80" --add-host host.docker.internal:host-gateway -e WWWUSER=1000 -e LARAVEL_SAIL=1 -e XDEBUG_MODE="off" -e XDEBUG_CONFIG="client_host=host.docker.internal" --network="sail" --name 2d_play_controls_ms dalvaradoc/2d_play_controls_ms:v2.1 
+docker exec -it 2d_play_controls_ms bash
+php artisan migrate
+exit
